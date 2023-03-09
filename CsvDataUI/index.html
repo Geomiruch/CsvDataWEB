@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSV File Upload</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>CSV File Upload</h1>
+    <form>
+      <label for="csv-file">Choose CSV File:</label>
+      <input type="file" id="csv-file" accept=".csv">
+      <button type="button" id="upload-btn">Upload</button>
+    </form>
+    <input type="text" id="filterName" placeholder="Name">
+    <input type="date" id="filterDate" placeholder="Date of birth">
+    <input type="text" id="filterPhone" placeholder="Phone">
+    Married: <input type="checkbox" id="filterMarried">
+    Not married: <input type="checkbox" id="filterNotMarried">
+    <input type="number" id="filterSalary" placeholder="Salary">
+    <button onclick="filterTable()">Filter</button>
+    <div id="table-container"></div>
+
+    
+
+    <script src="script.js"></script>
+  </body>
+</html>
