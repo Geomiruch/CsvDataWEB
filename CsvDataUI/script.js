@@ -51,7 +51,7 @@ function createTable(data) {
     const thead = table.createTHead();
 
     const headerRow = thead.insertRow();
-    const columnNames = Object.keys(data[0]);
+    const columnNames = ['Id', 'Name', 'Date of birth', 'Married', 'Phone', 'Salary'] ;
 
     columnNames.forEach(key => {
         const headerCell = document.createElement('th');

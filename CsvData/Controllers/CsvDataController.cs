@@ -1,5 +1,6 @@
 ﻿using CsvData.Data;
 using CsvData.Models;
+using CsvData.Services;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -19,95 +20,57 @@ namespace CsvData.Controllers
     [Route("api/[controller]")]
     public class CsvDataController : Controller
     {
-        private readonly CsvDataContext context;
-        public CsvDataController(CsvDataContext context)
+        private readonly ICsvDataService csvDataService;
+
+        public CsvDataController(ICsvDataService csvDataService)
         {
-            this.context = context;
+            this.csvDataService = csvDataService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllData()
         {
-            return Ok(await context.CsvData.ToListAsync());
+            return Ok(await csvDataService.GetDataAsync());
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public async Task<IActionResult> GetDataById([FromRoute] int id)
         {
-            return Ok(await context.CsvData.FirstOrDefaultAsync(x => x.Id == id));
+            return Ok(await csvDataService.GetDataByIdAsync(id));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateData([FromRoute] int id, [FromBody] CsvDataModel updatedData)
         {
-            var existingData = await context.CsvData.FindAsync(id);
-
-            if(existingData==null)
+            try
+            {
+                return Ok(await csvDataService.UpdateDataAsync(id, updatedData));
+            }
+            catch(Exception)
             {
                 return NotFound();
             }
-
-            existingData.Name = updatedData.Name;
-            existingData.DateOfBirth = updatedData.DateOfBirth;
-            existingData.Married = updatedData.Married;
-            existingData.Phone = updatedData.Phone;
-            existingData.Salary = updatedData.Salary;
-
-            await context.SaveChangesAsync();
-
-            return Ok(existingData);
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> DeleteData([FromRoute] int id)
         {
-            var existingData = await context.CsvData.FindAsync(id);
-
-            if (existingData == null)
+            try
+            {
+                csvDataService.DeleteDataAsync(id);
+            }
+            catch(Exception)
             {
                 return NotFound();
             }
-
-            context.CsvData.Remove(existingData);
-            await context.SaveChangesAsync();
-
             return Ok();
         }
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            foreach (var entity in context.CsvData)
-                context.CsvData.Remove(entity);
-            context.SaveChanges();
-
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files", file.FileName); 
-            using (var fileStream = new FileStream(path, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
-
-            string[] dataValues = null;
-            string[] datas = System.IO.File.ReadAllLines(path, Encoding.UTF8);
-            for (int i = 1; i < datas.Length; i++)
-            {
-                if (!String.IsNullOrEmpty(datas[i]))
-                {
-                    dataValues = datas[i].Split(';');
-                    CsvDataModel data = new CsvDataModel();
-                    data.Name = dataValues[1];
-                    data.DateOfBirth = Convert.ToDateTime(dataValues[2]);
-                    data.Married = Convert.ToBoolean(Convert.ToInt64(dataValues[3]));
-                    data.Phone = dataValues[4];
-                    data.Salary = Convert.ToDecimal(dataValues[5]);
-                    await context.CsvData.AddAsync(data);
-
-                    await context.SaveChangesAsync();
-                }
-            }
-
-            return Ok(await context.CsvData.ToListAsync());
+            return Ok(await csvDataService.UploadDataAsync(file));
         }
 
     }
