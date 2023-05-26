@@ -1,0 +1,51 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    margin: 1rem;
+  }
+  
+  form {
+    display: flex;
+    margin: 1rem;
+  }
+  
+  label {
+    margin-right: 1rem;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  table {
+    border-collapse: collapse;
+    margin: 1rem;
+  }
+  
+  th,
+  td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  tr:hover {
+    background-color: #e2e6ea;
+  }
